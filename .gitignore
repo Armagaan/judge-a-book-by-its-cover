@@ -1,0 +1,7 @@
+# Download data from link provided in the README.md
+data.zip
+
+__pycache__/
+data/
+output/
+rough/

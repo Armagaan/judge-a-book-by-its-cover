@@ -24,9 +24,9 @@ Find `data.zip` at the following [link](https://drive.google.com/file/d/1SyPFq_r
 
 ## Run
 - All scripts must be run from the `code` directory.
-- CNN : `python cnn.py <dataset_dir>`
-- Bidirectional-RNN : `python rnn.py <dataset_dir>`
-- Multimodal : `python comp.py <dataset_dir>`
+- CNN : `python cnn.py <dataset_dir_path>`
+- Bidirectional-RNN : `python rnn.py <dataset_dir_path>`
+- Multimodal : `python comp.py <dataset_dir_path>`
 
 ## Description
 Running any of the `.py` files will do the following:

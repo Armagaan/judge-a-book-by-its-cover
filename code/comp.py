@@ -245,7 +245,7 @@ if __name__ == "__main__":
 
     # Save output to disk.
     df = pd.DataFrame({
-        "Id": torch.Tensor(range(predictions_test.size(0))),
+        "Id": torch.tensor(range(predictions_test.size(0)), dtype=torch.Long),
         "Genre": predictions_test.to("cpu")
     })
     df.to_csv("comp_test_y.csv", index=False)

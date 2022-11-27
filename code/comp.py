@@ -248,4 +248,4 @@ if __name__ == "__main__":
         "Id": torch.Tensor(range(predictions_test.size(0))),
         "Genre": predictions_test.to("cpu")
     })
-    df.to_csv("comp_test_pred_y.csv", index=False)
+    df.to_csv("comp_test_y.csv", index=False)

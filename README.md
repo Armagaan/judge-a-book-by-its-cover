@@ -12,7 +12,7 @@ Find `data.zip` at the following [link](https://drive.google.com/file/d/1SyPFq_r
 - Run `conda env create -f env.yaml` to create a conda env by the name `perk`.
 - Run `conda activate perk` prior to running any scripts in this repo.
 
-## Expedted dataset directory structure
+## Expedted `dataset_dir` structure
 - `<dataset_dir>`
     - `images/`
     - `comp_test_x.csv`
@@ -22,6 +22,7 @@ Find `data.zip` at the following [link](https://drive.google.com/file/d/1SyPFq_r
     - `train_y.csv`
 
 ## Run
+- All scripts must be run from the `code` directory.
 - CNN : `python cnn.py <dataset_dir>`
 - Bidirectional-RNN : `python rnn.py <dataset_dir>`
 - Multimodal : `python comp.py <dataset_dir>`

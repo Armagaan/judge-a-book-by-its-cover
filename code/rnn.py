@@ -7,7 +7,6 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from torch.nn import Module
-from torch.optim import Adam
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataset import random_split
 from torchtext.data.utils import get_tokenizer
@@ -169,7 +168,10 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
     # Preprocess the data
-    dataset_train = TextData(path_x=f"{DIR_TRAIN}/train_x.csv", path_y=f"{DIR_TRAIN}/train_y.csv")
+    dataset_train = TextData(
+        path_x=f"{DIR_TRAIN}/train_x.csv",
+        path_y=f"{DIR_TRAIN}/train_y.csv"
+    )
     val_split_idx = int(0.95 * len(dataset_train))
     split_train_, split_val_ = random_split(dataset_train, [val_split_idx, len(dataset_train) - val_split_idx])
     dataloader_train = DataLoader(
@@ -194,7 +196,7 @@ if __name__ == "__main__":
         criterion=criterion,
         max_epochs=EPOCHS
     )
-    torch.save(model, f"../output/rnn_{int(time())}.pt")
+    torch.save(model, f"rnn_{int(time())}.pt")
     dataset_test = TextData(
         path_x=f"{DIR_TRAIN}/non_comp_test_x.csv",
         path_y=f"{DIR_TRAIN}/non_comp_test_y.csv"

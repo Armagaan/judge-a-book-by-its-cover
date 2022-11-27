@@ -1,5 +1,6 @@
 # Judge a Book by its Cover
-[Kaggle competition](https://www.kaggle.com/competitions/col774-2022/overview)
+![Book](https://static.vecteezy.com/system/resources/thumbnails/002/041/725/original/motion-of-opened-book-on-desk-static-shot-free-video.jpg)
+[Kaggle competition](https://www.kaggle.com/competitions/col774-2022/overview): Predict a book's genre given its cover image and title.
 
 ## Team
 - Burouj Armgaan
@@ -28,10 +29,10 @@ Find `data.zip` at the following [link](https://drive.google.com/file/d/1SyPFq_r
 - Multimodal : `python comp.py <dataset_dir>`
 
 ## Description
-- Running any of the `.py` files will do the following:
-    - Train the model
-    - Print out the test accuracy
-    - Save the model to disk in the format `<model>_<time>.pt`.
-    - Store the predictions on the test set in a csv file named:
-        - `non_comp_test_pred_y.csv` for `cnn.py` & `rnn.py`.
-        - `comp_test_pred_y.csv` for `compy.py`.
+Running any of the `.py` files will do the following:
+- Train the model
+- Print out the test accuracy
+- Save the model to disk in the format `<model>_<time>.pt`.
+- Store the test-set predictions in a `.csv` file named:
+    - `non_comp_test_pred_y.csv` for `cnn.py` & `rnn.py`.
+    - `comp_test_pred_y.csv` for `compy.py`.

@@ -144,7 +144,7 @@ def train(model, dataloader_train, dataloader_val, optimizer, criterion, max_epo
             if index % log_interval == 0:
                 val_acc, __ = evaluate(model, dataloader_val)
                 print(
-                    f"Epoch: {epoch}/{max_epochs:2d}"
+                    f"Epoch: {epoch}/{max_epochs:02d}"
                     f" | Batch: {index:4d}/{len(dataloader_train)}"
                     f" | Train Acc: {100 * train_acc / count:4.5f} %"
                     f" | Val Acc: {100 * val_acc:4.5f} %"
@@ -166,7 +166,7 @@ def train(model, dataloader_train, dataloader_val, optimizer, criterion, max_epo
 if __name__ == "__main__":
     # * ---- Training ----
     # Initiate the model.
-    EPOCHS = 1
+    EPOCHS = 50
     LR = 1e-4
     BATCH_SIZE = 64
     model = Book_genre().to(device)

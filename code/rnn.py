@@ -15,7 +15,7 @@ from torchtext.vocab import GloVe
 torch.manual_seed(7)
 
 if len(sys.argv) != 2:
-    print(f"USAGE: python rnn.py <dataset_dir>")
+    print(f"USAGE: python rnn.py <dataset_dir_path>")
     exit(1)
 DIR_TRAIN = sys.argv[1]
 
@@ -214,6 +214,9 @@ if __name__ == "__main__":
     print(f"\nTest accuracy: {100 * acc_test:.4f} %")
 
     # Save output to disk.
-    df = pd.DataFrame({"Id": ids.to("cpu"), "Genre": preds_test.to("cpu")})
+    df = pd.DataFrame({
+        "Id": ids.to("cpu").to(torch.int),
+        "Genre": preds_test.to("cpu").to(torch.int)
+    })
     df.sort_values(by=["Id"], inplace=True)
     df.to_csv("non_comp_test_pred_y.csv", index=False)

@@ -35,4 +35,4 @@ Running any of the `.py` files will do the following:
 - Save the model to disk in the format `<model>_<time>.pt`.
 - Store the test-set predictions in a `.csv` file named:
     - `non_comp_test_pred_y.csv` for `cnn.py` & `rnn.py`.
-    - `comp_test_y.csv` for `compy.py`.
+    - `comp_test_y.csv` for `comp.py`.

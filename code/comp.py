@@ -62,7 +62,7 @@ def pipeline_image(image):
     ])
     return preprocess(image)
 
-device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 def collate_batch(batch):
     text = list(map(lambda x:x[0], batch))
     tokenized = pipeline_text(text)

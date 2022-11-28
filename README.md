@@ -15,7 +15,7 @@ Find `data.zip` at the following [link](https://drive.google.com/file/d/1SyPFq_r
 
 ## Expedted `dataset_dir` structure
 - `<dataset_dir>`
-    - `images/`
+    - `images/images/`
     - `comp_test_x.csv`
     - `non_comp_test_x.csv`
     - `non_comp_test_y.csv`

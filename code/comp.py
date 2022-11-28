@@ -2,15 +2,10 @@
 
 # * ---- Imports ----
 from copy import deepcopy
-import os
 from PIL import Image
 import sys
 from time import time
-os.environ["TRANSFORMERS_CACHE"]='/home/burouj/work/cache'
 
-import nltk
-nltk.download('stopwords')
-stopwords_ = nltk.corpus.stopwords.words("english")
 import pandas as pd
 import torch
 import torch.nn as nn
@@ -18,14 +13,14 @@ from torch.nn import Module
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.dataset import random_split
 from torchvision import transforms
-from torchvision.models import convnext_base
+from torchvision.models import resnet152
 from transformers import BertTokenizer, BertModel, logging
 
 # Since we won't be using all the ouputs of BERT.
 # BertModel prints a message reminding us that we are not using all the outputs.
 # We want to ignore that. So, we change the verbosity the default "info" to "error".
 logging.set_verbosity_error()
-torch.manual_seed(3407)
+torch.manual_seed(7)
 
 if len(sys.argv) != 2:
     print("Usage: python comp.py <dataset_dir_path>")
@@ -47,7 +42,6 @@ class MultimodalDataset(Dataset):
 
     def __getitem__(self, index):
         text = self.df["Title"].iloc[index]
-        text = " ".join([word for word in text.lower().split() if word not in stopwords_])
         image = Image.open(f"{self.dir_image}/{self.df['Cover_image_name'].iloc[index]}")
         label = self.labels["Genre"].iloc[index]
         return (text, image, label)
@@ -90,14 +84,14 @@ class Book_genre(Module):
             param.requires_grad = False
 
         # Image
-        self.conv = convnext_base(weights="ConvNeXt_Base_Weights.IMAGENET1K_V1")
-        self.conv = nn.Sequential(*list(self.conv.children())[:-1])
-        for param in self.conv.parameters():
+        self.resnet = resnet152(weights="ResNet152_Weights.IMAGENET1K_V1")
+        self.resnet = nn.Sequential(*list(self.resnet.children())[:-1])
+        for param in self.resnet.parameters():
             param.requires_grad = False
 
         # NN
-        self.fc1 = nn.Linear(1792, 256)
-        self.fc2 = nn.Linear(256, 30)
+        self.fc1 = nn.Linear(768+2048, 128) # 768 for bert, 2048 for resnet
+        self.fc2 = nn.Linear(128, 30)
         return
 
     def forward(self, text_input_ids, text_attention, images):
@@ -105,7 +99,7 @@ class Book_genre(Module):
         x_text = self.bert(input_ids=text_input_ids, attention_mask=text_attention)
         x_text = x_text.last_hidden_state[:, 0, :] # extract the cls embedding.
         # Image
-        x_image = self.conv(images)
+        x_image = self.resnet(images)
         x_image = x_image.squeeze()
         # NN
         x = torch.cat([x_text, x_image], dim=1)
@@ -125,10 +119,10 @@ def evaluate(model, dataloader):
             list_predictions.append(predictions.argmax(1))
     return acc/count, torch.cat(list_predictions)
 
-def train(model, dataloader_train, dataloader_val, optimizer, scheduler, criterion, max_epochs:int =10):
+def train(model, dataloader_train, dataloader_val, optimizer, criterion, max_epochs:int =10):
     count = 0
     log_interval = 100
-    PATIENCE = 10
+    PATIENCE = 5
     patience = 0
     train_acc = 0
     best_val_acc = 0
@@ -143,7 +137,6 @@ def train(model, dataloader_train, dataloader_val, optimizer, scheduler, criteri
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 0.1)
             optimizer.step()
-            scheduler.step()
             train_acc += (predictions.argmax(1) == labels).sum().item()
             count += labels.size(0)
             if index % log_interval == 0:
@@ -171,13 +164,12 @@ def train(model, dataloader_train, dataloader_val, optimizer, scheduler, criteri
 if __name__ == "__main__":
     # * ---- Training ----
     # Initiate the model.
-    EPOCHS = 50
-    LR = 1e-2
-    BATCH_SIZE = 32
+    EPOCHS = 25
+    LR = 1e-4
+    BATCH_SIZE = 64
     model = Book_genre().to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.9)
 
     # Create combined train_x and train_y files.
     train_x_files = ["train_x", "non_comp_test_x"]
@@ -197,10 +189,10 @@ if __name__ == "__main__":
     dataset_train = MultimodalDataset(
         path_x=f"{DIR_TRAIN}/perk_combined_train_x.csv",
         path_y=f"{DIR_TRAIN}/perk_combined_train_y.csv",
-        dir_image=f"{DIR_TRAIN}/images"
+        dir_image=f"{DIR_TRAIN}/images/images"
     )
-    val_split = 0.95
-    split_train_, split_val_ = random_split(dataset_train, [val_split, 1 - val_split])
+    val_split_idx = int(0.95 * len(dataset_train))
+    split_train_, split_val_ = random_split(dataset_train, [val_split_idx, len(dataset_train) - val_split_idx])
     dataloader_train = DataLoader(
         dataset=split_train_,
         batch_size=BATCH_SIZE,
@@ -213,14 +205,13 @@ if __name__ == "__main__":
         shuffle=True,
         collate_fn=collate_batch
     )
-    
+
     # Train
     best_model = train(
         model=model,
         dataloader_train=dataloader_train,
         dataloader_val=dataloader_val,
         optimizer=optimizer,
-        scheduler=scheduler,
         criterion=criterion,
         max_epochs=EPOCHS
     )
@@ -240,7 +231,7 @@ if __name__ == "__main__":
     dataset_test = MultimodalDataset(
         path_x=f"{DIR_TRAIN}/comp_test_x.csv",
         path_y=f"{DIR_TRAIN}/perk_dummpy_comp_test_y.csv",
-        dir_image=f"{DIR_TRAIN}/images"
+        dir_image=f"{DIR_TRAIN}/images/images"
     )
     dataloader_test = DataLoader(
         dataset=dataset_test,

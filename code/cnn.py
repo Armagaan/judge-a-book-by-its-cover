@@ -272,7 +272,7 @@ lis = [* range(0, len(test_act), 1)]
 
 pred_test = []
 for i in test_pred:
-    pred_test.append(i.item())
+    pred_test.append(int(i.item()))
 
 df = pd.DataFrame({"Id":lis, "Genre":pred_test})
 df.to_csv("non_comp_test_pred_y.csv")

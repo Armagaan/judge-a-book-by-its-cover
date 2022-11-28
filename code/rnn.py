@@ -20,7 +20,7 @@ if len(sys.argv) != 2:
 DIR_TRAIN = sys.argv[1]
 
 # Download and import GloVe embeddings.
-glove = GloVe(name="6B", dim=300, cache="../data/")
+glove = GloVe(name="6B", dim=300, cache="./")
 glove_embeddings = glove.vectors.clone()
 glove_embeddings = torch.cat([glove_embeddings, torch.rand(2, glove_embeddings.shape[1])], axis=0)
 glove_vocab = glove.stoi.copy()

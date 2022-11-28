@@ -233,7 +233,7 @@ def check_acc(act,pred):
 train_acc,train_pred,train_act = prediction(train_loader)
 print("Accuracy of network on training set = ",train_acc)
 
-print("Training acc = ",check_acc(act_trn,pred_trn))
+
 
 
 
